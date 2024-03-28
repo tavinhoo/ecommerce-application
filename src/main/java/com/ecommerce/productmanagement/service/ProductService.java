@@ -24,7 +24,7 @@ public class ProductService {
 
     public Optional<Product> findProductById(Long id) {
         Optional<Product> product0 = productRepository.findById(id);
-        if(product0.isEmpty()) {
+        if(product0.isPresent()) {
             return product0;
         } else {
             throw new ProductNotFound("Product Not Found!");
@@ -46,6 +46,15 @@ public class ProductService {
         }
         productRepository.deleteById(id);
         return Optional.of("Product Deleted!");
+    }
+
+    public Optional<Object> updateProduct(Long id, ProductDTO productDTO) {
+        if(!productRepository.existsById(id)) {
+            throw new ProductNotFound("Product Not Found!");
+        }
+        Product product0 = productRepository.findById(id).get();
+        BeanUtils.copyProperties(productDTO, product0);
+        return Optional.of(productRepository.save(product0));
     }
 
     public boolean existsByName(String name) {

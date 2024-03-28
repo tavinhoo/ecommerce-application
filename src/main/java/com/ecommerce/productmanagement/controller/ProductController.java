@@ -28,9 +28,8 @@ public class ProductController {
 
     @GetMapping("/products/{id}")
     public ResponseEntity<Object> getOneProduct(@PathVariable(value = "id") Long id) {
-        Optional<Product> product0 = productService.findProductById(id);
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(product0.get());
+            return ResponseEntity.status(HttpStatus.OK).body(productService.findProductById(id).get());
         } catch (ProductNotFound error) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error.getMessage());
         }
@@ -42,6 +41,15 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.OK).body(productService.saveProduct(productDTO));
         } catch (ProductAlreadyExists error) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error.getMessage());
+        }
+    }
+
+    @PutMapping("/products/{id}")
+    public ResponseEntity<Object> updateProduct(@PathVariable(name = "id") Long id, @RequestBody ProductDTO productDTO) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(id, productDTO).get());
+        } catch (ProductNotFound error) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error.getMessage());
         }
     }
 
